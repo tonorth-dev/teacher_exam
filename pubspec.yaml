@@ -59,6 +59,7 @@ dependencies:
   searchfield: ^1.0.0
   omni_datetime_picker: ^2.0.5
   window_manager: ^0.4.3
+  super_sliver_list: ^0.4.1
 
 
 dev_dependencies:

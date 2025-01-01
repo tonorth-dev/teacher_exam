@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:teacher_exam/component/widget.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
+import '../../component/widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,17 +10,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<bool> _isHovering = List.generate(4, (index) => false);
+  final _listController = ListController();
   final ScrollController _scrollController = ScrollController();
   List<int> _highlightedItems = [2]; // Example: Highlight the third item
-
-  // Create keys for each question
-  final List<GlobalKey> _questionKeys = List.generate(6, (_) => GlobalKey());
-  Map<int, double> _itemHeights = {};
+  List<bool> _isHovering = List.generate(4, (_) => false); // Initialize hover state
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _listController.dispose(); // Don't forget to dispose ListController
     super.dispose();
   }
 
@@ -137,6 +134,15 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   _highlightedItems = [i];
                   print(i);
+                  if (i < 6) { // Ensure index is within bounds
+                    _listController.animateToItem(
+                      index: i,
+                      scrollController: _scrollController,
+                      alignment: 0.5,
+                      duration: (estimatedDistance) => Duration(milliseconds: 500),
+                      curve: (estimatedDistance) => Curves.easeInOut,
+                    );
+                  }
                 });
               },
               text: "测试$i",
@@ -276,48 +282,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Question content section
   Widget _buildQuestionContent() {
     return Container(
       decoration: BoxDecoration(
         color: Color(0x70FFDBDB),
         borderRadius: BorderRadius.circular(2),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: 6, // Adjust based on your number of questions
-          itemBuilder: (context, index) => _buildQuestion(index: index),
-        ),
+      child: Column(
+        children: [
+          SizedBox(height: 20),
+          Image.asset(
+            'assets/images/question_header.png',
+            width: 200,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SuperListView.builder(
+                listController: _listController,
+                controller: _scrollController,
+                itemCount: 6, // Adjust based on your number of questions
+                itemBuilder: (context, index) => _buildQuestion(index: index),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Individual question layout
   Widget _buildQuestion({required int index}) {
     bool isHighlighted = _highlightedItems.contains(index);
     Color? backgroundColor = isHighlighted ? Color(0xFFEAF7FE) : Colors.white;
 
-    // Cache item height
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_itemHeights.containsKey(index)) {
-        final RenderBox? renderBox = _questionKeys[index].currentContext?.findRenderObject() as RenderBox?;
-        if (renderBox != null) {
-          _itemHeights[index] = renderBox.size.height;
-        }
-      }
-    });
-
-    // Scroll to the highlighted item if it's not visible
+    // Scroll to the item after building, but only if it's highlighted and the frame has been laid out
     if (isHighlighted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToIndex(index);
+        _listController.animateToItem(
+          index: index,
+          scrollController: _scrollController,
+          alignment: 0.5,
+          duration: (estimatedDistance) => Duration(milliseconds: 500),
+          curve: (estimatedDistance) => Curves.easeInOut,
+        );
       });
     }
 
     return Container(
-      key: _questionKeys[index], // Assign key to each question
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -344,25 +355,28 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/images/answer_icon.png',
-                  width: 24,
-                  height: 48,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...',
-                    style: TextStyle(
-                      color: Colors.black.withOpacity(0.7),
-                      fontSize: 14,
+            Container(
+              color: Colors.grey[50],
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/images/answer_icon.png',
+                    width: 24,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...没有特殊待遇...',
+                      style: TextStyle(
+                        color: Colors.black.withOpacity(0.7),
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -370,7 +384,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Timer section
   Widget _buildTimer() {
     return Container(
       width: 320,
@@ -388,7 +401,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Image.asset(
                 'assets/images/timer_header.png',
-                fit: BoxFit.fill, // 根据需要调整 fit 属性
+                fit: BoxFit.fill,
               ),
             ),
             Expanded(
@@ -414,28 +427,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _scrollToIndex(int index) {
-    if (_scrollController.hasClients) {
-      Future.delayed(Duration.zero, () {
-        if (_itemHeights.containsKey(index)) {
-          final offset = _itemHeights[index]! * index - 50; // Leaves some space above
-          _scrollController.animateTo(
-            max(0.0, min(offset, _scrollController.position.maxScrollExtent)),
-            duration: Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        } else {
-          final RenderBox? renderBox = _questionKeys[index].currentContext?.findRenderObject() as RenderBox?;
-          if (renderBox != null) {
-            final offset = renderBox.localToGlobal(Offset.zero).dy - 50; // Adjust to leave space above
-            _scrollController.animateTo(
-              max(0.0, min(offset, _scrollController.position.maxScrollExtent)),
-              duration: Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
-          }
-        }
-      });
-    }
+  void animateToItem(int index) {
+    _listController.animateToItem(
+      index: index,
+      scrollController: _scrollController,
+      alignment: 0.5,
+      duration: (estimatedDistance) => Duration(milliseconds: 500),
+      curve: (estimatedDistance) => Curves.easeInOut,
+    );
   }
 }
