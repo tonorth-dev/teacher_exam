@@ -7,6 +7,7 @@ class Assets {
   static const String fontsOPPOSansBold = 'assets/fonts/OPPOSans-Bold.ttf';
   static const String fontsOPPOSansMedium = 'assets/fonts/OPPOSans-Medium.ttf';
   static const String fontsOPPOSansRegular = 'assets/fonts/OPPOSans-Regular.ttf';
+  static const String imagesAnswerIcon = 'assets/images/answer_icon.png';
   static const String imagesCat = 'assets/images/cat.jpeg';
   static const String imagesExamBannerLogo = 'assets/images/exam_banner_logo.png';
   static const String imagesExamBtnBg1 = 'assets/images/exam_btn_bg1.png';

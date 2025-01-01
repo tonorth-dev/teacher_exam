@@ -131,6 +131,16 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          for (int i = 0; i < 7; i++) // Changed to 7 to match your button indices
+            HoverTextButton(
+              onTap: () {
+                setState(() {
+                  _highlightedItems = [i];
+                  print(i);
+                });
+              },
+              text: "测试$i",
+            ),
           _buildUserInfo(),
           const SizedBox(height: 20),
           _buildSystemLogs(),
@@ -273,10 +283,13 @@ class _HomePageState extends State<HomePage> {
         color: Color(0x70FFDBDB),
         borderRadius: BorderRadius.circular(2),
       ),
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: 6, // Adjust based on your number of questions
-        itemBuilder: (context, index) => _buildQuestion(index: index),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: 6, // Adjust based on your number of questions
+          itemBuilder: (context, index) => _buildQuestion(index: index),
+        ),
       ),
     );
   }
@@ -284,7 +297,7 @@ class _HomePageState extends State<HomePage> {
   // Individual question layout
   Widget _buildQuestion({required int index}) {
     bool isHighlighted = _highlightedItems.contains(index);
-    Color backgroundColor = isHighlighted ? Colors.greenAccent : Colors.white;
+    Color? backgroundColor = isHighlighted ? Color(0xFFEAF7FE) : Colors.white;
 
     // Cache item height
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -370,26 +383,14 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              '答题时间',
-              style: TextStyle(
-                color: Color(0xFFFFF3E6),
-                fontSize: 30,
-                fontFamily: 'YouSheBiaoTiHei',
-                fontWeight: FontWeight.w400,
-                height: 1.30,
+            Container(
+              width: 200,
+              padding: const EdgeInsets.all(16.0),
+              child: Image.asset(
+                'assets/images/timer_header.png',
+                fit: BoxFit.fill, // 根据需要调整 fit 属性
               ),
             ),
-            for (int i = 0; i < 7; i++) // Changed to 7 to match your button indices
-              HoverTextButton(
-                onTap: () {
-                  setState(() {
-                    _highlightedItems = [i];
-                    print(i);
-                  });
-                },
-                text: "测试$i",
-              ),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
