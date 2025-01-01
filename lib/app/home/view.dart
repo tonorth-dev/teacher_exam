@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:teacher_exam/component/widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,7 +13,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<bool> _isHovering = List.generate(4, (index) => false);
   final ScrollController _scrollController = ScrollController();
-  final List<int> _highlightedItems = [2]; // Example: Highlight the third item
+  List<int> _highlightedItems = [2]; // Example: Highlight the third item
+
+  // Create keys for each question
+  final List<GlobalKey> _questionKeys = List.generate(6, (_) => GlobalKey());
+  Map<int, double> _itemHeights = {};
 
   @override
   void dispose() {
@@ -242,7 +249,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Right panel with question content and timer
   Widget _buildRightPanel() {
     return Container(
       child: Padding(
@@ -278,7 +284,17 @@ class _HomePageState extends State<HomePage> {
   // Individual question layout
   Widget _buildQuestion({required int index}) {
     bool isHighlighted = _highlightedItems.contains(index);
-    Color backgroundColor = isHighlighted ? Colors.yellow : Colors.white;
+    Color backgroundColor = isHighlighted ? Colors.greenAccent : Colors.white;
+
+    // Cache item height
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_itemHeights.containsKey(index)) {
+        final RenderBox? renderBox = _questionKeys[index].currentContext?.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          _itemHeights[index] = renderBox.size.height;
+        }
+      }
+    });
 
     // Scroll to the highlighted item if it's not visible
     if (isHighlighted) {
@@ -288,6 +304,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Container(
+      key: _questionKeys[index], // Assign key to each question
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -363,6 +380,16 @@ class _HomePageState extends State<HomePage> {
                 height: 1.30,
               ),
             ),
+            for (int i = 0; i < 7; i++) // Changed to 7 to match your button indices
+              HoverTextButton(
+                onTap: () {
+                  setState(() {
+                    _highlightedItems = [i];
+                    print(i);
+                  });
+                },
+                text: "测试$i",
+              ),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -388,12 +415,26 @@ class _HomePageState extends State<HomePage> {
 
   void _scrollToIndex(int index) {
     if (_scrollController.hasClients) {
-      final itemExtent = 200.0; // Adjust this based on the actual height of each question item
-      _scrollController.animateTo(
-        index * itemExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      Future.delayed(Duration.zero, () {
+        if (_itemHeights.containsKey(index)) {
+          final offset = _itemHeights[index]! * index - 50; // Leaves some space above
+          _scrollController.animateTo(
+            max(0.0, min(offset, _scrollController.position.maxScrollExtent)),
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        } else {
+          final RenderBox? renderBox = _questionKeys[index].currentContext?.findRenderObject() as RenderBox?;
+          if (renderBox != null) {
+            final offset = renderBox.localToGlobal(Offset.zero).dy - 50; // Adjust to leave space above
+            _scrollController.animateTo(
+              max(0.0, min(offset, _scrollController.position.maxScrollExtent)),
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          }
+        }
+      });
     }
   }
 }
