@@ -290,14 +290,14 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          SizedBox(height: 20),
+          SizedBox(height: 15),
           Image.asset(
             'assets/images/question_header.png',
             width: 200,
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: SuperListView.builder(
                 listController: _listController,
                 controller: _scrollController,
@@ -398,7 +398,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Container(
               width: 200,
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Image.asset(
                 'assets/images/timer_header.png',
                 fit: BoxFit.fill,

@@ -60,7 +60,7 @@ dependencies:
   omni_datetime_picker: ^2.0.5
   window_manager: ^0.4.3
   super_sliver_list: ^0.4.1
-
+  timer_count_down: ^2.2.2
 
 dev_dependencies:
   flutter_test:
