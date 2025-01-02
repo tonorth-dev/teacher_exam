@@ -409,111 +409,147 @@ class _HomePageState extends State<HomePage> {
       height: 800, // Adjusted height for better layout
       decoration: BoxDecoration(
         color: Colors.red[400],
-        borderRadius:
-            BorderRadius.circular(2), // Increased border radius for aesthetics
+        borderRadius: BorderRadius.circular(16), // Increased border radius for aesthetics
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Timer header image
             Container(
-              width: 200,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              width: double.infinity, // Make it stretch horizontally
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Image.asset(
                 'assets/images/timer_header.png',
-                fit: BoxFit.fill,
+                height: 46,
               ),
             ),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(
-                      2), // Increased border radius for aesthetics
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(
-                    child: RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                          fontSize: 54,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red, // 根据需要调整颜色
-                          fontFamily: 'Anton-Regular', // 根据需要调整字体
-                        ),
+              child: Column(
+                children: [
+                  // White container with time display and button inside
+                  Container(
+                    width: double.infinity,
+                    height: 550, // Adjusted height for better layout
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16), // Match with parent container
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
                         children: [
-                          TextSpan(
-                            text: '${(_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[0]}',
-                          ),
-                          TextSpan(
-                            text: ' ', // 增加秒的两位数之间的间距
-                            style: TextStyle(
-                              color: Colors.transparent, // 透明颜色
-                              fontSize: 54, // 与分钟和秒相同的字体大小
+                          // Time display at the top of the white container
+                          Center(
+                            child: RichText(
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontSize: 54,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                  fontFamily: 'Anton-Regular',
+                                ),
+                                children: [
+                                  TextSpan(text: (_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[0]),
+                                  TextSpan(
+                                    text: ' ', // Increase space between digits of minutes
+                                    style: TextStyle(color: Colors.transparent, fontSize: 54),
+                                  ),
+                                  TextSpan(text: (_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[1]),
+                                  TextSpan(text: ' : '), // Increase space around colon
+                                  TextSpan(text: (_countdown.currentSeconds % 60).toString().padLeft(2, '0')[0]),
+                                  TextSpan(
+                                    text: ' ', // Increase space between digits of seconds
+                                    style: TextStyle(color: Colors.transparent, fontSize: 54),
+                                  ),
+                                  TextSpan(text: (_countdown.currentSeconds % 60).toString().padLeft(2, '0')[1]),
+                                ],
+                              ),
                             ),
                           ),
-                          TextSpan(
-                            text: '${(_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[1]}',
-                          ),
-                          TextSpan(
-                            text: ' : ', // 增加冒号两边的间距
-                          ),
-                          TextSpan(
-                            text: '${(_countdown.currentSeconds % 60).toString().padLeft(2, '0')[0]}',
-                          ),
-                          TextSpan(
-                            text: ' ', // 增加秒的两位数之间的间距
-                            style: TextStyle(
-                              color: Colors.transparent, // 透明颜色
-                              fontSize: 54, // 与分钟和秒相同的字体大小
-                            ),
-                          ),
-                          TextSpan(
-                            text: '${(_countdown.currentSeconds % 60).toString().padLeft(2, '0')[1]}',
+                          const SizedBox(height: 20), // Space between time and button
+                          // Custom button directly below the time display
+                          _buildCustomButton(),
+                          // Display segments using StreamBuilder
+                          StreamBuilder<List<String>>(
+                            stream: _countdown.segmentsStream,
+                            initialData: [],
+                            builder: (context, snapshot) {
+                              final segments = snapshot.data ?? [];
+                              return segments.isNotEmpty
+                                  ? Text(
+                                '分段: ${segments.join(", ")}',
+                                style: const TextStyle(fontSize: 18),
+                              )
+                                  : const Text('暂无分段', style: TextStyle(fontSize: 18));
+                            },
                           ),
                         ],
                       ),
                     ),
                   ),
-                  //todo 我想在这里加一个按钮，按钮可以设置背景图片并有鼠标悬浮和点击效果
-                ),
+
+                  const Spacer(), // Push the control buttons to the bottom
+
+                  // Control buttons row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      ElevatedButton(
+                        child: Text(_countdown.isRunning ? 'Pause' : 'Start'),
+                        onPressed: () => _countdown.startOrResume(),
+                      ),
+                      ElevatedButton(
+                        child: Text('Restart'),
+                        onPressed: () => _countdown.restart(900),
+                      ),
+                      ElevatedButton(
+                        child: Text('Mark Segment'),
+                        onPressed: () => _countdown.markSegment(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text(_countdown.isRunning ? 'Pause' : 'Start'),
-                  onPressed: () => _countdown.startOrResume(),
-                ),
-                ElevatedButton(
-                  child: Text('Restart'),
-                  onPressed: () => _countdown.restart(900),
-                ),
-                ElevatedButton(
-                  child: Text('Mark Segment'),
-                  onPressed: () => _countdown.markSegment(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Display segments using StreamBuilder
-            StreamBuilder<List<String>>(
-              stream: _countdown.segmentsStream,
-              initialData: [],
-              builder: (context, snapshot) {
-                final segments = snapshot.data ?? [];
-                return segments.isNotEmpty
-                    ? Text(
-                        '分段: ${segments.join(", ")}',
-                        style: const TextStyle(fontSize: 18),
-                      )
-                    : const Text('暂无分段', style: TextStyle(fontSize: 18));
-              },
-            ),
           ],
+        ),
+      ),
+    );
+  }
+
+// The custom button widget remains unchanged
+  Widget _buildCustomButton() {
+    return Container(
+      width: double.infinity, // Make the button stretch horizontally
+      height: 50, // Adjust based on design needs
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/timer_seg.png'),
+          fit: BoxFit.fill,
+        ),
+        borderRadius: BorderRadius.circular(2), // Match with parent container
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            _countdown.markSegment();
+          },
+          onHover: (isHovering) {
+            // Optional: Change state or appearance when hovered
+          },
+          child: Center(
+            child: Text(
+              '分段计时', // Button label
+              style: TextStyle(
+                color: Colors.white, // Label color
+                fontSize: 20, // Label size
+                fontWeight: FontWeight.bold, // Label weight
+              ),
+            ),
+          ),
         ),
       ),
     );
