@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../component/widget.dart';
+import './countdown_logic.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,10 +14,21 @@ class _HomePageState extends State<HomePage> {
   final _listController = ListController();
   final ScrollController _scrollController = ScrollController();
   List<int> _highlightedItems = [2]; // Example: Highlight the third item
-  List<bool> _isHovering = List.generate(4, (_) => false); // Initialize hover state
+  List<bool> _isHovering =
+      List.generate(4, (_) => false); // Initialize hover state
+  late Countdown _countdown;
+
+  @override
+  void initState() {
+    super.initState();
+    _countdown = Countdown(
+        totalDuration: 900); // Default total duration in seconds (15 minutes)
+    _listenToCountdown();
+  }
 
   @override
   void dispose() {
+    _countdown.dispose();
     _scrollController.dispose();
     _listController.dispose(); // Don't forget to dispose ListController
     super.dispose();
@@ -57,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(
                   4,
-                      (index) => MouseRegion(
+                  (index) => MouseRegion(
                     onEnter: (_) => setState(() => _isHovering[index] = true),
                     onExit: (_) => setState(() => _isHovering[index] = false),
                     child: Stack(
@@ -82,7 +94,8 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: _isHovering[index] ? 5 : 0,
-                            shadowColor: Colors.black.withAlpha((0.25 * 255).round()),
+                            shadowColor:
+                                Colors.black.withAlpha((0.25 * 255).round()),
                           ),
                           child: Center(
                             child: Text(
@@ -128,18 +141,22 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (int i = 0; i < 7; i++) // Changed to 7 to match your button indices
+          for (int i = 0;
+              i < 7;
+              i++) // Changed to 7 to match your button indices
             HoverTextButton(
               onTap: () {
                 setState(() {
                   _highlightedItems = [i];
                   print(i);
-                  if (i < 6) { // Ensure index is within bounds
+                  if (i < 6) {
+                    // Ensure index is within bounds
                     _listController.animateToItem(
                       index: i,
                       scrollController: _scrollController,
                       alignment: 0.5,
-                      duration: (estimatedDistance) => Duration(milliseconds: 500),
+                      duration: (estimatedDistance) =>
+                          Duration(milliseconds: 500),
                       curve: (estimatedDistance) => Curves.easeInOut,
                     );
                   }
@@ -297,7 +314,8 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: SuperListView.builder(
                 listController: _listController,
                 controller: _scrollController,
@@ -350,7 +368,8 @@ class _HomePageState extends State<HomePage> {
                     height: 24,
                   ),
                   const SizedBox(width: 10),
-                  Text('军队有大量的规章制度和条令条例，纪律严明，你怎么看?', style: TextStyle(fontSize: 16)),
+                  Text('军队有大量的规章制度和条令条例，纪律严明，你怎么看?',
+                      style: TextStyle(fontSize: 16)),
                 ],
               ),
             ),
@@ -386,11 +405,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildTimer() {
     return Container(
-      width: 320,
-      height: 1000,
+      width: 340,
+      height: 800, // Adjusted height for better layout
       decoration: BoxDecoration(
         color: Colors.red[400],
-        borderRadius: BorderRadius.circular(2),
+        borderRadius:
+            BorderRadius.circular(2), // Increased border radius for aesthetics
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -398,7 +418,8 @@ class _HomePageState extends State<HomePage> {
           children: [
             Container(
               width: 200,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Image.asset(
                 'assets/images/timer_header.png',
                 fit: BoxFit.fill,
@@ -408,18 +429,89 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(
+                      2), // Increased border radius for aesthetics
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Center(
-                    child: Text(
-                      '00:00:00',
-                      style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 54,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red, // 根据需要调整颜色
+                          fontFamily: 'Anton-Regular', // 根据需要调整字体
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '${(_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[0]}',
+                          ),
+                          TextSpan(
+                            text: ' ', // 增加秒的两位数之间的间距
+                            style: TextStyle(
+                              color: Colors.transparent, // 透明颜色
+                              fontSize: 54, // 与分钟和秒相同的字体大小
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${(_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[1]}',
+                          ),
+                          TextSpan(
+                            text: ' : ', // 增加冒号两边的间距
+                          ),
+                          TextSpan(
+                            text: '${(_countdown.currentSeconds % 60).toString().padLeft(2, '0')[0]}',
+                          ),
+                          TextSpan(
+                            text: ' ', // 增加秒的两位数之间的间距
+                            style: TextStyle(
+                              color: Colors.transparent, // 透明颜色
+                              fontSize: 54, // 与分钟和秒相同的字体大小
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${(_countdown.currentSeconds % 60).toString().padLeft(2, '0')[1]}',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  //todo 我想在这里加一个按钮，按钮可以设置背景图片并有鼠标悬浮和点击效果
                 ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                ElevatedButton(
+                  child: Text(_countdown.isRunning ? 'Pause' : 'Start'),
+                  onPressed: () => _countdown.startOrResume(),
+                ),
+                ElevatedButton(
+                  child: Text('Restart'),
+                  onPressed: () => _countdown.restart(900),
+                ),
+                ElevatedButton(
+                  child: Text('Mark Segment'),
+                  onPressed: () => _countdown.markSegment(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Display segments using StreamBuilder
+            StreamBuilder<List<String>>(
+              stream: _countdown.segmentsStream,
+              initialData: [],
+              builder: (context, snapshot) {
+                final segments = snapshot.data ?? [];
+                return segments.isNotEmpty
+                    ? Text(
+                        '分段: ${segments.join(", ")}',
+                        style: const TextStyle(fontSize: 18),
+                      )
+                    : const Text('暂无分段', style: TextStyle(fontSize: 18));
+              },
             ),
           ],
         ),
@@ -435,5 +527,19 @@ class _HomePageState extends State<HomePage> {
       duration: (estimatedDistance) => Duration(milliseconds: 500),
       curve: (estimatedDistance) => Curves.easeInOut,
     );
+  }
+
+  void _listenToCountdown() {
+    _countdown.tickStream.listen((seconds) {
+      setState(() {});
+    });
+
+    _countdown.isRunningStream.listen((isRunning) {
+      setState(() {});
+    });
+
+    _countdown.segmentsStream.listen((segments) {
+      setState(() {});
+    });
   }
 }

@@ -3,7 +3,8 @@ class Assets {
   Assets._();
 
   static const String assetsImagesFollowHeaderBg = 'assets/images/follow_header_bg.png';
-  static const String fontsArialUnicodeMS = 'assets/fonts/Arial Unicode MS.TTF';
+  static const String fontsAntonRegular = 'assets/fonts/Anton-Regular.ttf';
+  static const String fontsArial Unicode MS = 'assets/fonts/Arial Unicode MS.TTF';
   static const String fontsOPPOSansBold = 'assets/fonts/OPPOSans-Bold.ttf';
   static const String fontsOPPOSansMedium = 'assets/fonts/OPPOSans-Medium.ttf';
   static const String fontsOPPOSansRegular = 'assets/fonts/OPPOSans-Regular.ttf';
@@ -20,11 +21,12 @@ class Assets {
   static const String imagesImg = 'assets/images/img.png';
   static const String imagesLogHeader = 'assets/images/log_header.png';
   static const String imagesLogo = 'assets/images/logo.jpg';
+  static const String imagesQuestionHeader = 'assets/images/question_header.png';
   static const String imagesQuestionIcon = 'assets/images/question_icon.png';
-  static const String imagesQuestionsTitle = 'assets/images/questions_title.png';
   static const String imagesStudentHeader = 'assets/images/student_header.png';
+  static const String imagesTimerHeader = 'assets/images/timer_header.png';
   static const String imagesWatermark = 'assets/images/watermark.jpg';
-  static const String imagesEmpty = 'assets/images/空.md';
+  static const String images空 = 'assets/images/空.md';
   static const String messagesCn = 'assets/messages/cn.json';
   static const String messagesEn = 'assets/messages/en.json';
 

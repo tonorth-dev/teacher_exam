@@ -80,6 +80,9 @@ flutter:
         - asset: assets/fonts/OPPOSans-Bold.ttf
         - asset: assets/fonts/OPPOSans-Medium.ttf
         - asset: assets/fonts/OPPOSans-Regular.ttf
-    - family: Arial Unicode MS.TTF
+    - family: ArialUnicodeMS
       fonts:
         - asset: assets/fonts/Arial Unicode MS.TTF
+    - family: Anton-Regular
+      fonts:
+        - asset: assets/fonts/Anton-Regular.ttf
