@@ -25,6 +25,7 @@ class Assets {
   static const String imagesQuestionIcon = 'assets/images/question_icon.png';
   static const String imagesStudentHeader = 'assets/images/student_header.png';
   static const String imagesTimerHeader = 'assets/images/timer_header.png';
+  static const String imagesTimerSeg = 'assets/images/timer_seg.png';
   static const String imagesWatermark = 'assets/images/watermark.jpg';
   static const String images空 = 'assets/images/空.md';
   static const String messagesCn = 'assets/messages/cn.json';

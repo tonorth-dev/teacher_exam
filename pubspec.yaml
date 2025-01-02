@@ -82,7 +82,7 @@ flutter:
         - asset: assets/fonts/OPPOSans-Regular.ttf
     - family: ArialUnicodeMS
       fonts:
-        - asset: assets/fonts/Arial Unicode MS.TTF
+        - asset: assets/fonts/ArialUnicodeMS.TTF
     - family: Anton-Regular
       fonts:
         - asset: assets/fonts/Anton-Regular.ttf

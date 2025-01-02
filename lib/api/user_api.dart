@@ -18,7 +18,7 @@ class UserApi {
       }
 
       // 发送POST请求
-      dynamic response = await HttpUtil.post('/base/login', params: params);
+      dynamic response = await HttpUtil.post('/base/teacher/login', params: params);
 
       return response;
     } catch (e) {
@@ -38,7 +38,7 @@ class UserApi {
   }
 
   static Future<dynamic> userList({Map<String, dynamic>? params}) async {
-    return await HttpUtil.get("/user/list", params: params);
+    return await HttpUtil.get("/user/teacher/info", params: params);
   }
 
   static Future<dynamic> userInsert({Map<String, dynamic>? params}) async {

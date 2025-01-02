@@ -70,7 +70,6 @@ class LoginLogic extends GetxController {
 
     try {
       var data = await UserApi.login({
-        'username': accountText.text,
         'password': passwordText.text,
         'captcha': captchaText.text,
         'captchaId': captchaId.value
@@ -80,7 +79,7 @@ class LoginLogic extends GetxController {
         await LoginData.easySave((dg) {
           dg.token = data['token'];
           dg.role = selectedRole.value;
-          dg.user = data['user']['nickName'];
+          dg.user = data['user']['userName'];
         });
         // 登录成功后保存账号信息
         saveAccountInfo(accountText.text);

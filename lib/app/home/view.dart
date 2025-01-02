@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:teacher_exam/app/home/head/logic.dart';
 import '../../component/widget.dart';
 import './countdown_logic.dart';
 
@@ -14,21 +17,21 @@ class _HomePageState extends State<HomePage> {
   final _listController = ListController();
   final ScrollController _scrollController = ScrollController();
   List<int> _highlightedItems = [2]; // Example: Highlight the third item
-  List<bool> _isHovering =
-      List.generate(4, (_) => false); // Initialize hover state
-  late Countdown _countdown;
+  final List<bool> _isHovering = List.generate(4, (_) => false); // Initialize hover state
+  late Countdown countdownLogic;
+  final headerLogic = Get.put(HeadLogic());
 
   @override
   void initState() {
     super.initState();
-    _countdown = Countdown(
+    countdownLogic = Countdown(
         totalDuration: 900); // Default total duration in seconds (15 minutes)
     _listenToCountdown();
   }
 
   @override
   void dispose() {
-    _countdown.dispose();
+    countdownLogic.dispose();
     _scrollController.dispose();
     _listController.dispose(); // Don't forget to dispose ListController
     super.dispose();
@@ -48,6 +51,24 @@ class _HomePageState extends State<HomePage> {
               fit: BoxFit.cover,
             ),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(32),
+                onTap: () {
+                  headerLogic.clickHeadImage();
+                },
+                child: ClipOval(
+                  child: Image.asset(
+                    "assets/images/cat.jpeg",
+                    height: 42,
+                    width: 42,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -67,22 +88,21 @@ class _HomePageState extends State<HomePage> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(
-                  4,
-                  (index) => MouseRegion(
-                    onEnter: (_) => setState(() => _isHovering[index] = true),
-                    onExit: (_) => setState(() => _isHovering[index] = false),
+                children: [
+                  MouseRegion(
+                    onEnter: (_) => setState(() => _isHovering[0] = true),
+                    onExit: (_) => setState(() => _isHovering[0] = false),
                     child: Stack(
                       children: [
                         Positioned.fill(
                           child: Image.asset(
-                            'assets/images/exam_btn_bg${index + 1}.png',
+                            'assets/images/exam_btn_bg1.png',
                             fit: BoxFit.cover,
                           ),
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            print('Button $index clicked!');
+                            print('Button 0 clicked!');
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
@@ -93,13 +113,12 @@ class _HomePageState extends State<HomePage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            elevation: _isHovering[index] ? 5 : 0,
-                            shadowColor:
-                                Colors.black.withAlpha((0.25 * 255).round()),
+                            elevation: _isHovering[0] ? 5 : 0,
+                            shadowColor: Colors.black.withAlpha((0.25 * 255).round()),
                           ),
                           child: Center(
                             child: Text(
-                              ['', '', '', ''][index],
+                              '', // 替换为实际文本
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -111,7 +130,128 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                ),
+                  MouseRegion(
+                    onEnter: (_) => setState(() => _isHovering[1] = true),
+                    onExit: (_) => setState(() => _isHovering[1] = false),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            countdownLogic.isRunning ? 'assets/images/exam_btn_bg2_2.png' : 'assets/images/exam_btn_bg2_1.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => countdownLogic.startOrResume(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(405, 110),
+                            maximumSize: const Size(405, 110),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: _isHovering[1] ? 5 : 0,
+                            shadowColor: Colors.black.withAlpha((0.25 * 255).round()),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '', // 替换为实际文本
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  MouseRegion(
+                    onEnter: (_) => setState(() => _isHovering[2] = true),
+                    onExit: (_) => setState(() => _isHovering[2] = false),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            'assets/images/exam_btn_bg3.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            countdownLogic.stop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(405, 110),
+                            maximumSize: const Size(405, 110),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: _isHovering[2] ? 5 : 0,
+                            shadowColor: Colors.black.withAlpha((0.25 * 255).round()),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '', // 替换为实际文本
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  MouseRegion(
+                    onEnter: (_) => setState(() => _isHovering[3] = true),
+                    onExit: (_) => setState(() => _isHovering[3] = false),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            'assets/images/exam_btn_bg4.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            print('Button 3 clicked!');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(405, 110),
+                            maximumSize: const Size(405, 110),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: _isHovering[3] ? 5 : 0,
+                            shadowColor: Colors.black.withAlpha((0.25 * 255).round()),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '', // 替换为实际文本
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 0),
               Expanded(
@@ -409,7 +549,7 @@ class _HomePageState extends State<HomePage> {
       height: 800, // Adjusted height for better layout
       decoration: BoxDecoration(
         color: Colors.red[400],
-        borderRadius: BorderRadius.circular(16), // Increased border radius for aesthetics
+        borderRadius: BorderRadius.circular(2), // Increased border radius for aesthetics
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -433,7 +573,7 @@ class _HomePageState extends State<HomePage> {
                     height: 550, // Adjusted height for better layout
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(16), // Match with parent container
+                      borderRadius: BorderRadius.circular(2), // Match with parent container
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -450,66 +590,79 @@ class _HomePageState extends State<HomePage> {
                                   fontFamily: 'Anton-Regular',
                                 ),
                                 children: [
-                                  TextSpan(text: (_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[0]),
+                                  TextSpan(text: (countdownLogic.currentSeconds ~/ 60).toString().padLeft(2, '0')[0]),
                                   TextSpan(
                                     text: ' ', // Increase space between digits of minutes
                                     style: TextStyle(color: Colors.transparent, fontSize: 54),
                                   ),
-                                  TextSpan(text: (_countdown.currentSeconds ~/ 60).toString().padLeft(2, '0')[1]),
+                                  TextSpan(text: (countdownLogic.currentSeconds ~/ 60).toString().padLeft(2, '0')[1]),
                                   TextSpan(text: ' : '), // Increase space around colon
-                                  TextSpan(text: (_countdown.currentSeconds % 60).toString().padLeft(2, '0')[0]),
+                                  TextSpan(text: (countdownLogic.currentSeconds % 60).toString().padLeft(2, '0')[0]),
                                   TextSpan(
                                     text: ' ', // Increase space between digits of seconds
                                     style: TextStyle(color: Colors.transparent, fontSize: 54),
                                   ),
-                                  TextSpan(text: (_countdown.currentSeconds % 60).toString().padLeft(2, '0')[1]),
+                                  TextSpan(text: (countdownLogic.currentSeconds % 60).toString().padLeft(2, '0')[1]),
                                 ],
                               ),
                             ),
                           ),
+                          if (countdownLogic.showElapsedTime)
+                            Center(
+                              child: Text(
+                                '本次共用时${(countdownLogic.totalDuration - countdownLogic.currentSeconds) ~/ 60}分${(countdownLogic.totalDuration - countdownLogic.currentSeconds) % 60}秒',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.orange,
+                                  fontFamily: 'PingFang SC',
+                                ),
+                              ),
+                          ),
                           const SizedBox(height: 20), // Space between time and button
                           // Custom button directly below the time display
                           _buildCustomButton(),
-                          // Display segments using StreamBuilder
-                          StreamBuilder<List<String>>(
-                            stream: _countdown.segmentsStream,
-                            initialData: [],
-                            builder: (context, snapshot) {
-                              final segments = snapshot.data ?? [];
-                              return segments.isNotEmpty
-                                  ? Text(
-                                '分段: ${segments.join(", ")}',
-                                style: const TextStyle(fontSize: 18),
-                              )
-                                  : const Text('暂无分段', style: TextStyle(fontSize: 18));
-                            },
+                          const SizedBox(height: 20),
+                          // Display segments using ListView
+                          Expanded(
+                            child: StreamBuilder<List<String>>(
+                              stream: countdownLogic.segmentsStream,
+                              initialData: [],
+                              builder: (context, snapshot) {
+                                final segments = snapshot.data ?? [];
+                                return ListView.builder(
+                                  itemCount: segments.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      leading: Text(
+                                        '第${index + 1}段用时：',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'PingFang SC',
+                                        ),
+                                      ),
+                                      title: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          segments[index],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.redAccent,
+                                            fontFamily: 'OPPOSans',
+                                          ),
+                                        ),
+                                      ),
+                                    );
+
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-
-                  const Spacer(), // Push the control buttons to the bottom
-
-                  // Control buttons row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      ElevatedButton(
-                        child: Text(_countdown.isRunning ? 'Pause' : 'Start'),
-                        onPressed: () => _countdown.startOrResume(),
-                      ),
-                      ElevatedButton(
-                        child: Text('Restart'),
-                        onPressed: () => _countdown.restart(900),
-                      ),
-                      ElevatedButton(
-                        child: Text('Mark Segment'),
-                        onPressed: () => _countdown.markSegment(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -518,6 +671,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 
 // The custom button widget remains unchanged
   Widget _buildCustomButton() {
@@ -535,7 +689,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            _countdown.markSegment();
+            countdownLogic.markSegment();
           },
           onHover: (isHovering) {
             // Optional: Change state or appearance when hovered
@@ -566,15 +720,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _listenToCountdown() {
-    _countdown.tickStream.listen((seconds) {
+    countdownLogic.tickStream.listen((seconds) {
       setState(() {});
     });
 
-    _countdown.isRunningStream.listen((isRunning) {
+    countdownLogic.isRunningStream.listen((isRunning) {
       setState(() {});
     });
 
-    _countdown.segmentsStream.listen((segments) {
+    countdownLogic.segmentsStream.listen((segments) {
       setState(() {});
     });
   }

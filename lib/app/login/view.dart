@@ -22,28 +22,8 @@ class LoginPage extends StatelessWidget {
                 style: TextStyle(fontSize: 32),
               ),
               SizedBox(height: 18),
-              Obx(() => DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: '选择角色',
-                  border: OutlineInputBorder(),
-                ),
-                value: logic.selectedRole.value,
-                onChanged: (String? newValue) {
-                  logic.selectedRole.value = newValue!;
-                },
-                items: <String>['超级管理员', '题库管理', '考生管理', '岗位管理', '讲义和心理管理']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              )),
-              SizedBox(height: 10),
-              textInput(logic.accountText, hintText: '请输入账号', labelText: '账号'),
-              SizedBox(height: 10),
               textInput(logic.passwordText,
-                  hintText: '请输入密码', labelText: '密码', password: true),
+                  hintText: '请输入班级密码', labelText: '班级密码', password: true),
               SizedBox(height: 10),
               Row(
                 children: [
