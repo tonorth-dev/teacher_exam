@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     countdownLogic.dispose();
     _scrollController.dispose();
-    _listController.dispose(); // Don't forget to dispose ListController
+    _listController.dispose();
     headerLogic.dispose();
     homeLogic.dispose();
     super.dispose();

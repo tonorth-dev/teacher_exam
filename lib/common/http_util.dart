@@ -108,7 +108,7 @@ class HttpUtil {
       LoginData.clear();
       await Future.delayed(Duration(milliseconds: 1000));
       Get.offAll(() => LoginPage());
-      return;
+      return Future.error("登录已失效，需重新登录");
     }
     if (data["code"] == 0) {
       return data["data"];
