@@ -13,6 +13,7 @@ class LoginData {
   String toJson() {
     return jsonEncode({
       "token": token,
+      "user": user,
       "themeName": themeName,
       "expiryDate": expiryDate != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(expiryDate!) : null,
     });
@@ -23,6 +24,7 @@ class LoginData {
     var data = LoginData();
     data.token = map["token"] ?? "";
     data.themeName = map["themeName"] ?? "";
+    data.user = map["user"] ?? "";
     if (map["expiryDate"] != null) {
       data.expiryDate = DateFormat('yyyy-MM-dd HH:mm:ss').parse(map["expiryDate"]);
     }
@@ -34,10 +36,17 @@ class LoginData {
   static Future<LoginData> read() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? data = prefs.getString(saveKey);
+    print("Data from SharedPreferences: $data"); // Add this line for debugging
     if (data == null || !await _isDataValid(data)) {
+      print("Data is null or invalid"); // Additional debug info
       return LoginData();
     }
-    return LoginData.fromJson(jsonDecode(data));
+    try {
+      return LoginData.fromJson(jsonDecode(data));
+    } catch (e) {
+      print("Error decoding JSON: $e"); // Log any JSON decoding errors
+      return LoginData();
+    }
   }
 
   // 检查数据是否有效（未过期）
@@ -71,5 +80,12 @@ class LoginData {
     // 确保每次保存前都设置新的过期时间
     data.setExpiryToTomorrow();
     await data.save();
+  }
+
+  // 新增 clear 方法：清除保存的数据
+  static Future<void> clear() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(saveKey);  // 删除保存的登录数据
+    print("Login data cleared.");
   }
 }

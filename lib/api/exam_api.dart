@@ -10,22 +10,10 @@ class ExamApi {
     receiveTimeout: const Duration(seconds: 10),
   ));
 
-  // 创建试卷
-  static Future<dynamic> getStudentList(Map<String, dynamic> params) async {
+  static Future<dynamic> pullExam() async {
     try {
-      // 必传字段校验
-      List<String> requiredFields = [
-        'class_id',
-        'question_count',
-      ];
-      for (var field in requiredFields) {
-        if (!params.containsKey(field) || params[field] == null) {
-          throw ArgumentError('Missing required field: $field');
-        }
-      }
-
       // 发送POST请求
-      dynamic response = await HttpUtil.post('/admin/exam/exam', params: params);
+      dynamic response = await HttpUtil.post('/teacher/exam/pull', params: {});
 
       return response;
     } catch (e) {

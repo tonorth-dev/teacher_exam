@@ -5,6 +5,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:teacher_exam/app/home/head/logic.dart';
 import '../../component/widget.dart';
 import './countdown_logic.dart';
+import 'home_logic.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   final List<bool> _isHovering = List.generate(4, (_) => false); // Initialize hover state
   late Countdown countdownLogic;
   final headerLogic = Get.put(HeadLogic());
+  final homeLogic = Get.put(HomeLogic());
 
   @override
   void initState() {
@@ -34,6 +36,8 @@ class _HomePageState extends State<HomePage> {
     countdownLogic.dispose();
     _scrollController.dispose();
     _listController.dispose(); // Don't forget to dispose ListController
+    headerLogic.dispose();
+    homeLogic.dispose();
     super.dispose();
   }
 
@@ -102,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            print('Button 0 clicked!');
+                            homeLogic.pullExam();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,

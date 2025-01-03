@@ -45,7 +45,6 @@ class LoginLogic extends GetxController {
       if (data['captchaId'].isNotEmpty) {
         captchaId.value = data['captchaId'];
         captchaImageUrl.value = data['picPath'];
-        print(data);
       } else {
         '获取验证码失败'.toHint();
       }
